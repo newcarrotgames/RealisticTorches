@@ -1,20 +1,20 @@
 package com.chaosthedude.realistictorches.config;
 
-import java.io.File;
-
 import com.chaosthedude.realistictorches.RealisticTorches;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.io.File;
+
 public class ConfigHandler {
 
 	public static Configuration config;
 
 	public static int torchBurnout = 72000;
+	public static int litByTorchBurnout = 7200;
 	public static int matchboxDurability = 64;
 	public static int lightSourceRegistryThreshold = 1;
 	public static int handheldLightUpdateTicks = 10;
@@ -27,6 +27,7 @@ public class ConfigHandler {
 	public static boolean matchboxCreatesFire = false;
 	public static boolean generateLitTorches = true;
 	public static boolean vanillaTorchDropsUnlit = false;
+	public static boolean lightWithTorches = false;
 
 	public static String[] lightSourceItems = {
 			"minecraft:lava_bucket",
@@ -57,6 +58,12 @@ public class ConfigHandler {
 
 		comment = "The amount of time until a torch burns out, in ticks (20 ticks = 1 second). Setting this to a negative value will disable torch burnout.";
 		torchBurnout = loadInt("torch.burnoutTime", comment, "general", torchBurnout);
+
+		comment = "The amount of time until a torch *lit by another torch* burns out, in ticks (20 ticks = 1 second).";
+		litByTorchBurnout = loadInt("torch.litByTorchBurnoutTime", comment, "general", litByTorchBurnout);
+
+		comment = "Set this to true to allow players to light unlit torches with lit torches.";
+		lightWithTorches = loadBool("torch.lightWithTorches", comment, "general", lightWithTorches);
 
 		comment = "The durability of the matchbox. Setting this to a negative value will result in unlimited uses.";
 		matchboxDurability = loadInt("matchbox.durability", comment, "general", matchboxDurability);

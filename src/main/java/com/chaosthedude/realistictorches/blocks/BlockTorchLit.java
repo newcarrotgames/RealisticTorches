@@ -1,11 +1,8 @@
 package com.chaosthedude.realistictorches.blocks;
 
-import java.util.Random;
-
 import com.chaosthedude.realistictorches.RealisticTorches;
 import com.chaosthedude.realistictorches.config.ConfigHandler;
 import com.chaosthedude.realistictorches.items.RealisticTorchesItems;
-
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -16,6 +13,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 public class BlockTorchLit extends BlockRealisticTorch {
 
@@ -48,7 +47,8 @@ public class BlockTorchLit extends BlockRealisticTorch {
 			if (world.isRainingAt(pos)) {
 				extinguish(world, pos, true);
 			} else {
-				world.scheduleUpdate(pos, this, (int) (ConfigHandler.torchBurnout * 0.9));
+				world.scheduleUpdate(pos, this,
+						(int) ((!wasLitByTorch() ? ConfigHandler.torchBurnout : ConfigHandler.litByTorchBurnout) * 0.9));
 			}
 		}
 	}
@@ -76,12 +76,11 @@ public class BlockTorchLit extends BlockRealisticTorch {
 	public void extinguish(World world, BlockPos pos, boolean extinguishFully) {
 		playExtinguishSound(world, pos);
 		if (!extinguishFully) {
-			world.setBlockState(pos, getState(world, pos, RealisticTorchesBlocks.torchSmoldering), 2);
+			world.setBlockState(pos, getState(world, pos, !wasLitByTorch() ? RealisticTorchesBlocks.torchSmoldering : RealisticTorchesBlocks.torchLitByTorchSmoldering), 2);
 		} else if (!ConfigHandler.noRelightEnabled) {
 			world.setBlockState(pos, getState(world, pos, RealisticTorchesBlocks.torchUnlit), 2);
 		} else {
 			world.setBlockToAir(pos);
 		}
 	}
-
 }

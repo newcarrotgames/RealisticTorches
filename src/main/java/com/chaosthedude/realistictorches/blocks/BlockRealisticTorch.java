@@ -2,10 +2,10 @@ package com.chaosthedude.realistictorches.blocks;
 
 import com.chaosthedude.realistictorches.config.ConfigHandler;
 import com.chaosthedude.realistictorches.items.RealisticTorchesItems;
-
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 public class BlockRealisticTorch extends BlockTorch {
 
 	private boolean isLit;
+	private boolean litByTorch;
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float side, float hitX, float hitY) {
@@ -30,11 +31,24 @@ public class BlockRealisticTorch extends BlockTorch {
 
 	public boolean lightTorch(World world, BlockPos pos, EntityPlayer player, ItemStack heldItem) {
 		if (world.getBlockState(pos).getBlock() instanceof BlockRealisticTorch) {
-			if (!heldItem.isEmpty() && (heldItem.getItem() == Items.FLINT_AND_STEEL || (ConfigHandler.matchboxCreatesFire && heldItem.getItem() == RealisticTorchesItems.matchbox)) && (!ConfigHandler.noRelightEnabled || !isLit())) {
-				heldItem.damageItem(1, player);
+
+			// todo: config option to control if you can light unlit torches with lit torches
+			if (!heldItem.isEmpty() &&
+					(heldItem.getItem() == Items.FLINT_AND_STEEL
+					|| (ConfigHandler.matchboxCreatesFire && heldItem.getItem() == RealisticTorchesItems.matchbox)
+					|| (ConfigHandler.lightWithTorches &&
+							(heldItem.getItem().getUnlocalizedName().equals(Blocks.TORCH.getUnlocalizedName())
+									|| heldItem.getItem().getUnlocalizedName().equals(RealisticTorchesBlocks.torchLit.getUnlocalizedName()))))
+					&& (!ConfigHandler.noRelightEnabled || !isLit())) {
+				// todo: why do we have to do this? what happens when we try to damage vanilla torches?
+				if (!heldItem.getItem().getUnlocalizedName().equals(Blocks.TORCH.getUnlocalizedName())) {
+					heldItem.damageItem(1, player);
+				}
 				playIgniteSound(world, pos);
 				if (!world.isRainingAt(pos)) {
-					world.setBlockState(pos, getState(world, pos, RealisticTorchesBlocks.torchLit), 2);
+					boolean litByTorch = heldItem.getItem().getUnlocalizedName().equals(Blocks.TORCH.getUnlocalizedName())
+							|| heldItem.getItem().getUnlocalizedName().equals(RealisticTorchesBlocks.torchLit.getUnlocalizedName());
+					world.setBlockState(pos, getState(world, pos, !litByTorch ? RealisticTorchesBlocks.torchLit : RealisticTorchesBlocks.torchLitByTorch), 2);
 				}
 
 				return true;
@@ -70,7 +84,15 @@ public class BlockRealisticTorch extends BlockTorch {
 	public boolean isLit() {
 		return isLit;
 	}
-	
+
+	public boolean wasLitByTorch() {
+		return litByTorch;
+	}
+
+	public void setLitByTorch(boolean litByTorch) {
+		this.litByTorch = litByTorch;
+	}
+
 	public boolean canBurnout() {
 		return ConfigHandler.torchBurnout > 0;
 	}

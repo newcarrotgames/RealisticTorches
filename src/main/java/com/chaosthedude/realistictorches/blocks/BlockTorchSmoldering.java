@@ -1,11 +1,8 @@
 package com.chaosthedude.realistictorches.blocks;
 
-import java.util.Random;
-
 import com.chaosthedude.realistictorches.RealisticTorches;
 import com.chaosthedude.realistictorches.config.ConfigHandler;
 import com.chaosthedude.realistictorches.items.RealisticTorchesItems;
-
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +15,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Random;
 
 public class BlockTorchSmoldering extends BlockRealisticTorch {
 
@@ -49,7 +48,8 @@ public class BlockTorchSmoldering extends BlockRealisticTorch {
 			if (world.isRainingAt(pos)) {
 				extinguish(world, pos, true);
 			} else {
-				world.scheduleUpdate(pos, this, (int) (ConfigHandler.torchBurnout / 10));
+				world.scheduleUpdate(pos, this,
+						(!wasLitByTorch() ? ConfigHandler.torchBurnout : ConfigHandler.litByTorchBurnout) / 10);
 			}
 		}
 	}
