@@ -2,6 +2,10 @@
 
 Realistic Torches is a Minecraft mod that causes torches to burn out after a configurable amount of time, encouraging players to move toward more permanent light sources early on.
 
+This branch demostrates adding the ability to light torches with lit torches. 
+
+DEMO: https://www.youtube.com/watch?v=PGggTkXo1Xw
+
 ## Download
 
 Downloads and more information can be found on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/realistic-torches) and [Modrinth](https://modrinth.com/mod/realistic-torches).
